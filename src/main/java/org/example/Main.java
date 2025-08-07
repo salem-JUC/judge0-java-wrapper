@@ -14,4 +14,9 @@ public class Main {
             System.out.println("i = " + i);
         }
     }
+
+    public static int add(int a, int b) {
+        //TIP Press <shortcut actionId="OverrideMethods"/> to override this method in the derived class.
+        return a + b;
+    }
 }
