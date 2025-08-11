@@ -1,4 +1,6 @@
-package org.example.consumer;
+package org.example;
+
+import org.example.Exception.InvalidClientConfigurationException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,8 +9,15 @@ import java.util.Base64;
 
 public class Judge0Client {
 
-    public Judge0Client() {
-        // Constructor
+    private String baseUrl;
+    private String apiKey;
+    private String rapidapiHost;
+    public Judge0Client(ClientBuilder builder) {
+        baseUrl = builder.baseUrl;
+        if (builder.apiKey != null)
+            apiKey = builder.apiKey;
+        if (builder.rapidapiHost != null)
+            rapidapiHost = builder.rapidapiHost;
     }
 
     public void submit(String sourceCode, int languageId, String input, String expected_output) throws IOException, InterruptedException {
@@ -24,9 +33,9 @@ public class Judge0Client {
 
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://judge0-extra-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=true&fields=*"))
-                .header("x-rapidapi-key", "64431d57cbmsh5e695d9da960983p1ca418jsn067194f9b2fa")
-                .header("x-rapidapi-host", "judge0-ce.p.rapidapi.com")
+                .uri(URI.create(baseUrl+"/submissions?base64_encoded=true&wait=true&fields=*"))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", rapidapiHost)
                 .header("Content-Type", "application/json")
                 .method("POST", HttpRequest.BodyPublishers.ofString(jsonPayload)
                 )
@@ -40,14 +49,44 @@ public class Judge0Client {
         System.out.println("Response :-" + response.toString());
     }
 
-    public void printLanguages(){
+    public void printLanguages() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://judge0-extra-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=true&fields=*"))
-                .header("x-rapidapi-key", "64431d57cbmsh5e695d9da960983p1ca418jsn067194f9b2fa")
-                .header("x-rapidapi-host", "judge0-ce.p.rapidapi.com")
-                .header("Content-Type", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(jsonPayload)
-                )
+                .uri(URI.create(baseUrl+"/languages"))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", rapidapiHost)
+                .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+    }
+
+
+
+
+
+    public static class ClientBuilder {
+        private String baseUrl;
+        private String apiKey;
+        private String rapidapiHost;
+
+        public ClientBuilder setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+        public ClientBuilder setApiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+        public ClientBuilder setRapidapiHost(String rapidapiHost) {
+            this.rapidapiHost = rapidapiHost;
+            return this;
+        }
+        public Judge0Client build() {
+            if (baseUrl == null || baseUrl.equals("")) {
+                throw new InvalidClientConfigurationException("Base URL must be set");
+            }
+
+            return new Judge0Client(this);
+        }
     }
 }
