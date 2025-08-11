@@ -1,5 +1,8 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.example.Exception.InvalidClientConfigurationException;
 
 import java.io.IOException;
@@ -20,34 +23,89 @@ public class Judge0Client {
             rapidapiHost = builder.rapidapiHost;
     }
 
-    public void submit(String sourceCode, int languageId, String input, String expected_output) throws IOException, InterruptedException {
-        String sourceCodeEncoded = Base64.getEncoder().encodeToString(sourceCode.getBytes());
-        String inputEncoded = Base64.getEncoder().encodeToString(input.getBytes());
-        String expectedOutputEncoded = Base64.getEncoder().encodeToString(expected_output.getBytes());
-        String jsonPayload = "{\n" +
-                "  \"source_code\": \"" + sourceCodeEncoded + "\",\n" +
-                "  \"language_id\": " + languageId + ",\n" +
-                "  \"stdin\": \"" + inputEncoded + "\",\n" +
-                "  \"expected_output\": \"" + expectedOutputEncoded + "\"\n" +
-                "}";
+    public SubmissionResult submitAndGetResult(Submission submission) throws IOException, InterruptedException {
 
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode payload = mapper.createObjectNode();
 
+        payload.put("source_code", submission.getSourceCode());
+        payload.put("language_id", submission.getLanguageId());
+        if (submission.getStdin() != null) {
+            payload.put("stdin", submission.getStdin());
+        }
+        if (submission.getExpectedOutput() != null) {
+            payload.put("expected_output", submission.getExpectedOutput());
+        }
+        if (submission.getCommandLineArguments() != null){
+            payload.put("command_line_arguments", submission.getCommandLineArguments());
+        }
+
+        System.out.println("Payload String:- " + payload.toString());
+        System.out.println("Payload text :-" + payload.asText());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl+"/submissions?base64_encoded=true&wait=true&fields=*"))
                 .header("x-rapidapi-key", apiKey)
                 .header("x-rapidapi-host", rapidapiHost)
                 .header("Content-Type", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(jsonPayload)
+                .method("POST", HttpRequest.BodyPublishers.ofString(payload.toString())
                 )
                 .build();
 
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 403){
+            throw new InvalidClientConfigurationException("Invalid API Key or RapidAPI Host");
+        }
+        if (response.statusCode() != 201) {
+            throw new RuntimeException("Failed to submit code: " + response.body());
+        }
+        SubmissionResult submissionResult = mapper.readValue(response.body() , SubmissionResult.class);
+        submissionResult = decodeSubmissionResult(submissionResult);
+        return submissionResult;
+    }
+
+    // this method do the same of the submitAndGetResult method but return a token instead of the full result
+    public String submitAndGetToken(Submission submission) throws IOException, InterruptedException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode payload = mapper.createObjectNode();
+
+        payload.put("source_code", submission.getSourceCode());
+        payload.put("language_id", submission.getLanguageId());
+        if (submission.getStdin() != null) {
+            payload.put("stdin", submission.getStdin());
+        }
+        if (submission.getExpectedOutput() != null) {
+            payload.put("expected_output", submission.getExpectedOutput());
+        }
+        if (submission.getCommandLineArguments() != null){
+            payload.put("command_line_arguments", submission.getCommandLineArguments());
+        }
+
+        System.out.println("Payload String:- " + payload.toString());
+        System.out.println("Payload text :-" + payload.asText());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl+"/submissions?base64_encoded=true&wait=false&fields=*"))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", rapidapiHost)
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(payload.toString())
+                )
+                .build();
 
         HttpResponse<String> response = HttpClient.newHttpClient()
                 .send(request, HttpResponse.BodyHandlers.ofString());
-
-
-        System.out.println("Response :-" + response.toString());
+        if (response.statusCode() == 403){
+            throw new InvalidClientConfigurationException("Invalid API Key or RapidAPI Host");
+        }
+        if (response.statusCode() != 201) {
+            throw new RuntimeException("Failed to submit code: " + response.body());
+        }
+        JsonNode rooNode = mapper.readTree(response.body());
+        String token = rooNode.path("token").asText();
+        return token;
     }
+
+
 
     public void printLanguages() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
@@ -60,7 +118,25 @@ public class Judge0Client {
         System.out.println(response.body());
     }
 
-
+    // helper method to decode source code , stdin , stdout, expected_output , post_execution_filesystem
+    private SubmissionResult decodeSubmissionResult(SubmissionResult submissionResult) {
+        if (submissionResult.getSourceCode() != null) {
+            submissionResult.setSourceCode(new String(Base64.getDecoder().decode(submissionResult.getSourceCode())));
+        }
+        if (submissionResult.getStdin() != null) {
+            submissionResult.setStdin(new String(Base64.getDecoder().decode(submissionResult.getStdin())));
+        }
+        if (submissionResult.getStdout() != null) {
+            submissionResult.setStdout(new String(Base64.getDecoder().decode(submissionResult.getStdout())));
+        }
+        if (submissionResult.getExpectedOutput() != null) {
+            submissionResult.setExpectedOutput(new String(Base64.getDecoder().decode(submissionResult.getExpectedOutput())));
+        }
+        if (submissionResult.getPostExecutionFilesystem() != null) {
+            submissionResult.setPostExecutionFilesystem(new String(Base64.getDecoder().decode(submissionResult.getPostExecutionFilesystem())));
+        }
+        return submissionResult;
+    }
 
 
 

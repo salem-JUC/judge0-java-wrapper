@@ -40,6 +40,14 @@ public class Submission {
         return expectedOutput;
     }
 
+    public String getCommandLineArguments() {
+        return commandLineArguments;
+    }
+
+    public void setCommandLineArguments(String commandLineArguments) {
+        this.commandLineArguments = commandLineArguments;
+    }
+
     public static class Builder {
         private String sourceCode;
         private int languageId;
