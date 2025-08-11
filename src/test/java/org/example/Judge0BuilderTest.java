@@ -9,7 +9,7 @@ class Judge0BuilderTest {
 
     @Test
     void testBuilderWithAllFields() {
-        Judge0Client client = new Judge0Client.ClientBuilder()
+        Judge0Client client = new Judge0Client.Builder()
                 .setBaseUrl("https://judge0-extra-ce.p.rapidapi.com")
                 .setApiKey("testApiKey")
                 .setRapidapiHost("judge0-extra-ce.p.rapidapi.com")
@@ -24,7 +24,7 @@ class Judge0BuilderTest {
 
     @Test
     void testBuilderWithoutOptionalFields() {
-        Judge0Client client = new Judge0Client.ClientBuilder()
+        Judge0Client client = new Judge0Client.Builder()
                 .setBaseUrl("http://localhost:2358")
                 .build();
 
@@ -36,7 +36,7 @@ class Judge0BuilderTest {
     @Test
     void testBuilderMissingBaseUrlThrowsException() {
         InvalidClientConfigurationException exception = assertThrows(InvalidClientConfigurationException.class, () -> {
-            new Judge0Client.ClientBuilder()
+            new Judge0Client.Builder()
                     .setApiKey("testApiKey")
                     .setRapidapiHost("somehost")
                     .build();

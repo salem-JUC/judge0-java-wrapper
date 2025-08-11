@@ -12,7 +12,7 @@ public class Judge0Client {
     private String baseUrl;
     private String apiKey;
     private String rapidapiHost;
-    public Judge0Client(ClientBuilder builder) {
+    public Judge0Client(Builder builder) {
         baseUrl = builder.baseUrl;
         if (builder.apiKey != null)
             apiKey = builder.apiKey;
@@ -64,20 +64,20 @@ public class Judge0Client {
 
 
 
-    public static class ClientBuilder {
+    public static class Builder {
         private String baseUrl;
         private String apiKey;
         private String rapidapiHost;
 
-        public ClientBuilder setBaseUrl(String baseUrl) {
+        public Builder setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
             return this;
         }
-        public ClientBuilder setApiKey(String apiKey) {
+        public Builder setApiKey(String apiKey) {
             this.apiKey = apiKey;
             return this;
         }
-        public ClientBuilder setRapidapiHost(String rapidapiHost) {
+        public Builder setRapidapiHost(String rapidapiHost) {
             this.rapidapiHost = rapidapiHost;
             return this;
         }
