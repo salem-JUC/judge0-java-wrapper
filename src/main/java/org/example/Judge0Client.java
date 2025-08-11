@@ -39,4 +39,15 @@ public class Judge0Client {
 
         System.out.println("Response :-" + response.toString());
     }
+
+    public void printLanguages(){
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://judge0-extra-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=true&fields=*"))
+                .header("x-rapidapi-key", "64431d57cbmsh5e695d9da960983p1ca418jsn067194f9b2fa")
+                .header("x-rapidapi-host", "judge0-ce.p.rapidapi.com")
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(jsonPayload)
+                )
+                .build();
+    }
 }
