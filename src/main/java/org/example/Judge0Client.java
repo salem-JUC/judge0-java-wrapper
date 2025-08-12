@@ -23,9 +23,11 @@ public class Judge0Client {
             rapidapiHost = builder.rapidapiHost;
     }
 
+    ObjectMapper mapper = new ObjectMapper();
+
     public SubmissionResult submitAndGetResult(Submission submission) throws IOException, InterruptedException {
 
-        ObjectMapper mapper = new ObjectMapper();
+
         ObjectNode payload = mapper.createObjectNode();
 
         payload.put("source_code", submission.getSourceCode());
@@ -104,6 +106,28 @@ public class Judge0Client {
         String token = rooNode.path("token").asText();
         return token;
     }
+
+    public SubmissionResult getSubmission(String token) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl+"/submissions/"+token+"?base64_encoded=true&fields=*"))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", rapidapiHost)
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 403){
+            throw new InvalidClientConfigurationException("Invalid API Key or RapidAPI Host");
+        }
+        if (response.statusCode() == 404){
+            throw new RuntimeException("Submission not found for token: " + token);
+        }
+        SubmissionResult submissionResult = mapper.readValue(response.body() , SubmissionResult.class);
+        submissionResult = decodeSubmissionResult(submissionResult);
+
+        return submissionResult;
+    }
+
+    
 
 
 
