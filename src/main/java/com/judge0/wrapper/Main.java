@@ -2,16 +2,15 @@ package com.judge0.wrapper;
 
 import java.io.IOException;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main {
     public static Judge0Client apIconsumer;
     public static void main(String[] args) {
 
         apIconsumer = new Judge0Client.Builder()
                 .setBaseUrl("https://judge0-ce.p.rapidapi.com")
-                .setApiKey("64431d57cbmsh5e695d9da960983p1ca418jsn067194f9b2fa")
-                .setRapidapiHost("judge0-ce.p.rapidapi.com")
+                .setApiKey("")
+                .setRapidapiHost("")
                 .build();
         // source code = hellow world in java in trible """
         String helloWorld = """
