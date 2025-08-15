@@ -1,4 +1,4 @@
-package org.example;
+package com.judge0.wrapper;
 
 import java.io.IOException;
 
@@ -9,9 +9,9 @@ public class Main {
     public static void main(String[] args) {
 
         apIconsumer = new Judge0Client.Builder()
-                .setBaseUrl("")
-                .setApiKey("")
-                .setRapidapiHost("")
+                .setBaseUrl("https://judge0-ce.p.rapidapi.com")
+                .setApiKey("64431d57cbmsh5e695d9da960983p1ca418jsn067194f9b2fa")
+                .setRapidapiHost("judge0-ce.p.rapidapi.com")
                 .build();
         // source code = hellow world in java in trible """
         String helloWorld = """
@@ -26,28 +26,29 @@ public class Main {
                 import java.util.Scanner;
                 public class Main {
                     public static void main(String[] args) {
-                        Scanner scanner = new Scanner(System.in);
+                        Scanne scanner = new Scanner(System.in);
                         int a = scanner.nextInt();
                         int b = scanner.nextInt();
                         System.out.println(a + b);
                     }
                 }
                 """;
-        Submission submission = new Submission.Builder()
-                .setLanguageId(62)
-                .setSourceCode(addition)
-                .setStdin("5 10")
-                .setExpectedOutput("5")
-                .build();
-        String token;
+//        Submission submission = new Submission.Builder()
+//                .setLanguageId(62)
+//                .setSourceCode(addition)
+//                .setStdin("5 10")
+//                .setExpectedOutput("5")
+//                .build();
+//        String token;
         try {
-            token = apIconsumer.submitAndGetToken(submission);
+            Language language = apIconsumer.getLanguageById(62);
+            System.out.println(language.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Token for submission: " + token);
+
 
     }
 

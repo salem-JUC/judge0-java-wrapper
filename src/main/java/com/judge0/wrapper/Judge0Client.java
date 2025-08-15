@@ -1,10 +1,10 @@
-package org.example;
+package com.judge0.wrapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.example.Exception.InvalidClientConfigurationException;
-import org.example.Exception.InvalidSubmissionBuild;
+import com.judge0.wrapper.Exception.InvalidClientConfigurationException;
+import com.judge0.wrapper.Exception.InvalidSubmissionBuild;
 
 import java.io.IOException;
 import java.net.URI;
@@ -147,12 +147,32 @@ public class Judge0Client {
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to get languages: " + response.body());
+        }
         List<Language> languages = mapper.readValue(response.body(), mapper.getTypeFactory().constructCollectionType(List.class, Language.class));
 
         return languages;
     }
 
-    // function that takes submission and list of test cases(input , output) and validate if this submission passes all test cases, and return each test case with status passed ot failed
+    public Language getLanguageById(long id) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl+"/languages/"+id))
+                .header("x-rapidapi-key", apiKey)
+                .header("x-rapidapi-host", rapidapiHost)
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 404) {
+            throw new RuntimeException("Language not found for id: " + id);
+        }
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to get language: " + response.body());
+        }
+        Language language = mapper.readValue(response.body() , Language.class);
+        return language;
+    }
+
 
 
 

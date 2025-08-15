@@ -1,4 +1,4 @@
-package org.example.Exception;
+package com.judge0.wrapper.Exception;
 
 public class InvalidClientConfigurationException extends RuntimeException{
 

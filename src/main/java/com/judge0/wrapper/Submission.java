@@ -1,6 +1,6 @@
-package org.example;
+package com.judge0.wrapper;
 
-import org.example.Exception.InvalidSubmissionBuild;
+import com.judge0.wrapper.Exception.InvalidSubmissionBuild;
 
 import java.util.Base64;
 

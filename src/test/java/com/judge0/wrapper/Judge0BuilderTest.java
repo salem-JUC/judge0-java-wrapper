@@ -1,6 +1,6 @@
-package org.example;
+package com.judge0.wrapper;
 
-import org.example.Exception.InvalidClientConfigurationException;
+import com.judge0.wrapper.Exception.InvalidClientConfigurationException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

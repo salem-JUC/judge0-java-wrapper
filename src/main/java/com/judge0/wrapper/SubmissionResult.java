@@ -1,9 +1,6 @@
-package org.example;
+package com.judge0.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.Instant;
 
 public class SubmissionResult {
     @JsonProperty("source_code")

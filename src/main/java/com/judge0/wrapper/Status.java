@@ -1,4 +1,4 @@
-package org.example;
+package com.judge0.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
