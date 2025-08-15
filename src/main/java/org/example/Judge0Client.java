@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.example.Exception.InvalidClientConfigurationException;
+import org.example.Exception.InvalidSubmissionBuild;
 
 import java.io.IOException;
 import java.net.URI;
@@ -59,8 +60,11 @@ public class Judge0Client {
         if (response.statusCode() == 403){
             throw new InvalidClientConfigurationException("Invalid API Key or RapidAPI Host");
         }
+        if (response.statusCode() == 422){
+            throw new InvalidSubmissionBuild("Invalid Submission: " + response.body());
+        }
         if (response.statusCode() != 201) {
-            throw new RuntimeException("Failed to submit code: " + response.body());
+            throw new RuntimeException("Failed to submit submission: " + response.body());
         }
         SubmissionResult submissionResult = mapper.readValue(response.body() , SubmissionResult.class);
         submissionResult = decodeSubmissionResult(submissionResult);
@@ -100,8 +104,11 @@ public class Judge0Client {
         if (response.statusCode() == 403){
             throw new InvalidClientConfigurationException("Invalid API Key or RapidAPI Host");
         }
+        if (response.statusCode() == 422){
+            throw new InvalidSubmissionBuild("Invalid Submission: " + response.body());
+        }
         if (response.statusCode() != 201) {
-            throw new RuntimeException("Failed to submit code: " + response.body());
+            throw new RuntimeException("Failed to submit submission: " + response.body());
         }
         JsonNode rooNode = mapper.readTree(response.body());
         String token = rooNode.path("token").asText();
@@ -121,6 +128,9 @@ public class Judge0Client {
         }
         if (response.statusCode() == 404){
             throw new RuntimeException("Submission not found for token: " + token);
+        }
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to get submission: " + response.body());
         }
         SubmissionResult submissionResult = mapper.readValue(response.body() , SubmissionResult.class);
         submissionResult = decodeSubmissionResult(submissionResult);
@@ -142,6 +152,10 @@ public class Judge0Client {
         return languages;
     }
 
+    // function that takes submission and list of test cases(input , output) and validate if this submission passes all test cases, and return each test case with status passed ot failed
+
+
+
     // helper method to decode source code , stdin , stdout, expected_output , post_execution_filesystem
     private SubmissionResult decodeSubmissionResult(SubmissionResult submissionResult) {
         if (submissionResult.getSourceCode() != null) {
@@ -158,6 +172,9 @@ public class Judge0Client {
         }
         if (submissionResult.getPostExecutionFilesystem() != null) {
             submissionResult.setPostExecutionFilesystem(new String(Base64.getDecoder().decode(submissionResult.getPostExecutionFilesystem())));
+        }
+        if (submissionResult.getCompileOutput() != null){
+            submissionResult.setCompileOutput(new String(Base64.getDecoder().decode(submissionResult.getCompileOutput())));
         }
         return submissionResult;
     }
