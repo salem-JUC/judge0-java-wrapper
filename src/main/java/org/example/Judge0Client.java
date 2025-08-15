@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.*;
 import java.util.Base64;
+import java.util.List;
 
 public class Judge0Client {
 
@@ -127,11 +128,8 @@ public class Judge0Client {
         return submissionResult;
     }
 
-    
 
-
-
-    public void printLanguages() throws IOException, InterruptedException {
+    public List<Language> getLanguages() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl+"/languages"))
                 .header("x-rapidapi-key", apiKey)
@@ -139,7 +137,9 @@ public class Judge0Client {
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
+        List<Language> languages = mapper.readValue(response.body(), mapper.getTypeFactory().constructCollectionType(List.class, Language.class));
+
+        return languages;
     }
 
     // helper method to decode source code , stdin , stdout, expected_output , post_execution_filesystem
