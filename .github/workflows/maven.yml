@@ -29,4 +29,6 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: run jar
+      run: java -jar ./target/judge0-java-wrapper-1.0-SNAPSHOT.jar
 
