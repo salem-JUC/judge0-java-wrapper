@@ -7,7 +7,7 @@ public class Status {
     @JsonProperty("id")
     private int id;
     @JsonProperty("description")
-    private String descriptionOhMyGod;
+    private String description;
 
     public Status(int id, String description) {
         this.id = id;
