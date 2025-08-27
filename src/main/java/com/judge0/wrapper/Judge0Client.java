@@ -9,6 +9,7 @@ import com.judge0.wrapper.Exception.InvalidSubmissionBuild;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.*;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -44,8 +45,7 @@ public class Judge0Client {
             payload.put("command_line_arguments", submission.getCommandLineArguments());
         }
 
-        System.out.println("Payload String:- " + payload.toString());
-        System.out.println("Payload text :-" + payload.asText());
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl+"/submissions?base64_encoded=true&wait=true&fields=*"))
                 .header("x-rapidapi-key", apiKey)
@@ -63,7 +63,7 @@ public class Judge0Client {
         if (response.statusCode() == 422){
             throw new InvalidSubmissionBuild("Invalid Submission: " + response.body());
         }
-        if (response.statusCode() != 201) {
+        if (response.statusCode() != 200) {
             throw new RuntimeException("Failed to submit submission: " + response.body());
         }
         SubmissionResult submissionResult = mapper.readValue(response.body() , SubmissionResult.class);
@@ -73,7 +73,6 @@ public class Judge0Client {
 
     // this method do the same of the submitAndGetResult method but return a token instead of the full result
     public String submitAndGetToken(Submission submission) throws IOException, InterruptedException {
-        ObjectMapper mapper = new ObjectMapper();
         ObjectNode payload = mapper.createObjectNode();
 
         payload.put("source_code", submission.getSourceCode());
@@ -88,8 +87,7 @@ public class Judge0Client {
             payload.put("command_line_arguments", submission.getCommandLineArguments());
         }
 
-        System.out.println("Payload String:- " + payload.toString());
-        System.out.println("Payload text :-" + payload.asText());
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl+"/submissions?base64_encoded=true&wait=false&fields=*"))
                 .header("x-rapidapi-key", apiKey)
@@ -171,6 +169,26 @@ public class Judge0Client {
         }
         Language language = mapper.readValue(response.body() , Language.class);
         return language;
+    }
+    public ValidationResult validationSubmission(Submission submission , List<TestCase> testCases) throws IOException, InterruptedException {
+        List<TestCaseResult> testCaseResults = new ArrayList<>();
+        boolean isAllPassed = true;
+
+        for (TestCase test: testCases) {
+            boolean passed = true;
+            submission.setStdin(test.getInput());
+            submission.setExpectedOutput(test.getExpectedOutput());
+            System.out.println("submission to be validate : " + submission.toString());
+            System.out.println("Test Case :" + test.toString());
+            SubmissionResult result = submitAndGetResult(submission);
+            if (result.getStatusId() != 3) {
+                isAllPassed = false;
+                passed = false;
+            }
+
+            testCaseResults.add(new TestCaseResult(result.getStdin() , result.getExpectedOutput() , result.getStdout() ,passed , result.getCompileOutput() ));
+        }
+        return new ValidationResult(isAllPassed , testCaseResults);
     }
 
 

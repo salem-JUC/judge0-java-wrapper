@@ -48,6 +48,25 @@ public class Submission {
         this.commandLineArguments = commandLineArguments;
     }
 
+    public void setStdin(String stdin) {
+        this.stdin = Base64.getEncoder().encodeToString(stdin.getBytes());
+    }
+
+    public void setExpectedOutput(String expectedOutput) {
+        this.expectedOutput = Base64.getEncoder().encodeToString(expectedOutput.getBytes());
+    }
+
+    @Override
+    public String toString() {
+        return "Submission{" +
+                "sourceCode='" + sourceCode + '\'' +
+                ", languageId=" + languageId +
+                ", stdin='" + stdin + '\'' +
+                ", expectedOutput='" + expectedOutput + '\'' +
+                ", commandLineArguments='" + commandLineArguments + '\'' +
+                '}';
+    }
+
     public static class Builder {
         private String sourceCode;
         private int languageId;
