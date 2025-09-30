@@ -13,12 +13,40 @@ A lightweight Java library that wraps around the Judge0 REST API to make it easy
 
 ## 📦 Installation
 
-### Using Maven (local build)
-Clone the repository and install it locally:
+### Using Maven 
+#### add this at pom.xml
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
-mvn clean install
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.salem-JUC</groupId>
+        <artifactId>judge0-java-wrapper</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
+```
+
+### Using Gradel
+#### add this to build.gradel
+```bash
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+dependencies {
+	        implementation 'com.github.salem-JUC:judge0-java-wrapper:1.0.0'
+	}
+
 ```
 ## 🚀 Getting Started
 
@@ -59,6 +87,8 @@ String token = client.submitAndGetToken(submission);
 SubmissionResult result = client.getSubmission(token);
 
 ```
+# Create a submission and evaluate it against multiple test cases.
+[![](https://jitpack.io/v/salem-JUC/judge0-java-wrapper.svg)](https://jitpack.io/#salem-JUC/judge0-java-wrapper)
 
 ---
 
