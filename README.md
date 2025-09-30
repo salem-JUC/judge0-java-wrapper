@@ -1,3 +1,7 @@
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/salem-JUC/judge0-java-wrapper/blob/main/LICENSE)
+[![](https://jitpack.io/v/salem-JUC/judge0-java-wrapper.svg)](https://jitpack.io/#salem-JUC/judge0-java-wrapper)
+
+
 # Java API Wrapper for Judge0API
 
 A lightweight Java library that wraps around the Judge0 REST API to make it easy to submit code, run test cases, and retrieve results — without having to manually handle JSON, HTTP requests, or Base64 encoding.
@@ -88,7 +92,7 @@ SubmissionResult result = client.getSubmission(token);
 
 ```
 # Create a submission and evaluate it against multiple test cases.
-[![](https://jitpack.io/v/salem-JUC/judge0-java-wrapper.svg)](https://jitpack.io/#salem-JUC/judge0-java-wrapper)
+
 
 ---
 
