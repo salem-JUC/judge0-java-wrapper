@@ -96,6 +96,6 @@ SubmissionResult result = client.getSubmission(token);
 
 ---
 
-**Author:** Salem Alsairi 
+**Author:** Salem 
 **GitHub:** [https://github.com/salem-JUC](https://github.com/salem-JUC)  
 **Email:** salemalsairi@gmail.com
